@@ -8,7 +8,7 @@ import (
 	"path/filepath"
 	"time"
 
-	"github.com/anurag0608/randnumsplash/utils"
+	"github.com/schollz/progressbar/v3"
 )
 
 var random *rand.Rand
@@ -35,7 +35,9 @@ func GenerateRandFile(targetFileSizeInBytes int64, targetLocation, fileName stri
 			return fmt.Errorf("failed to get file stats: %w", err)
 		}
 		// file don't exist
-		fmt.Println("File:" + fileName + " not found ⚠️\nCreating... ✅")
+		if loggingEnabled {
+			fmt.Println("File:" + fileName + " not found ⚠️\nCreating... ✅")
+		}
 		file, err = os.Create(targetFileLoc)
 		if err != nil {
 			return fmt.Errorf("failed to create file: %w", err)
@@ -50,70 +52,59 @@ func GenerateRandFile(targetFileSizeInBytes int64, targetLocation, fileName stri
 	defer file.Close()
 
 	// get sleep timer for updateFileSizeRoutine and buffer size using targetFileSize
-	sleep, buffSize := computeSleepAndBuffer(targetFileSizeInBytes)
+	buffSize := computeBufferSize(targetFileSizeInBytes)
 
 	// create a buffered writer, with buffer of size 64kb
 	bw := bufio.NewWriterSize(file, buffSize)
 	if loggingEnabled {
 		fmt.Printf("Target file size: %v Bytes | %0.2f Mb\n", targetFileSizeInBytes, float64(targetFileSizeInBytes)/(1024*1024))
-		fmt.Println("starting dumping random numbers 🤖")
+		fmt.Println("Starting dumping random numbers 🤖")
 	}
-	progressLineItr := utils.GetProgressLineIterator()
+	// progressLineItr := utils.GetProgressLineIterator()
 	start := time.Now()
-	var currentFileSize int64 = 0
-	done := make(chan bool)
-	// start go routine
-	go updateFileSizeRoutine(targetFileLoc, done, &currentFileSize, sleep)
 
+	progressBar := progressbar.NewOptions64(
+		targetFileSizeInBytes,
+		progressbar.OptionSetDescription(`📂`),
+		progressbar.OptionSetWriter(os.Stderr),
+		progressbar.OptionShowBytes(true),
+		progressbar.OptionSetWidth(15),
+		progressbar.OptionThrottle(65*time.Millisecond),
+		progressbar.OptionShowCount(),
+		progressbar.OptionOnCompletion(func() {
+			fmt.Fprint(os.Stderr, "\n")
+		}),
+		progressbar.OptionSpinnerType(14),
+		progressbar.OptionSetRenderBlankState(false),
+	)
+	var total int64 = 0
 	for {
-		if currentFileSize >= targetFileSizeInBytes {
+		if total >= targetFileSizeInBytes {
 			break
 		}
+		str := fmt.Sprintf("%v\n", genRandNum())
+		total += int64(len([]byte(str)))
 		if loggingEnabled {
-			utils.ShowProgressBar(currentFileSize, targetFileSizeInBytes, progressLineItr)
+			progressBar.Add(len([]byte(str)))
 		}
-		bw.WriteString(fmt.Sprintf("%v\n", genRandNum()))
+		bw.WriteString(str)
 	}
-	// exit the updateFileSizeRoutine
-	close(done)
-	// show remaining progress bar
 	if loggingEnabled {
-		utils.ShowProgressBar(currentFileSize, targetFileSizeInBytes, progressLineItr)
+		progressBar.Finish()
 	}
 	// dont flush current file size already exceeded the target size
 	// bw.Flush()
 	end := time.Now()
 	elapsed := end.Sub(start)
 	if loggingEnabled {
-		fmt.Printf("\nDone✅ \nTook ✨ %0.2fs\n", elapsed.Seconds())
+		fmt.Printf("Done✅ \nTook ✨ %0.2fs\n", elapsed.Seconds())
 	}
 	return nil
 }
-
-// go routine for updating current file size, to avoid overhead
-func updateFileSizeRoutine(fileName string, done chan bool, currentFileSize *int64, sleep time.Duration) {
-	for {
-		select {
-		case <-done:
-			// exit the goroutine
-			return
-		default:
-			fileinfo, err := os.Stat(fileName)
-			if err == nil {
-				*currentFileSize = fileinfo.Size()
-			}
-			time.Sleep(sleep)
-		}
-	}
-}
-func computeSleepAndBuffer(targetFileSizeInBytes int64) (time.Duration, int) {
-	var sleep time.Duration
+func computeBufferSize(targetFileSizeInBytes int64) int {
 	buffSize := 64 * 1024
 	if targetFileSizeInBytes < 64*1024 {
-		sleep = 0
 		buffSize = 1
-	} else {
-		sleep = time.Second
 	}
-	return sleep, buffSize
+	return buffSize
 }

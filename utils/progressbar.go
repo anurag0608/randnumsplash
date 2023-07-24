@@ -2,6 +2,7 @@ package utils
 
 import "fmt"
 
+/*Too Slow: Not using it anymore*/
 func ShowProgressBar(currentFileSizeInBytes int64, targetFileSizeInBytes int64, progressLineItr func() string) {
 	fmt.Printf(
 		"\r%v %v/%v Bytes | %v/%v Kb | %0.2f/%0.2f Mb",
