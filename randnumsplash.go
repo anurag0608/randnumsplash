@@ -22,30 +22,30 @@ func genRandNum() int64 {
 	// Generate a random int64 number between 0 and the maximum 10000
 	return random.Int63n(10000)
 }
-func GenerateRandFile(targetFileSizeInBytes int64, targetLocation, fileName string, loggingEnabled bool)(err error){
+func GenerateRandFile(targetFileSizeInBytes int64, targetLocation, fileName string, loggingEnabled bool) (err error) {
 	defer func() {
 		if r := recover(); r != nil {
-			err = fmt.Errorf("PANIC: %v",r)
+			err = fmt.Errorf("PANIC: %v", r)
 		}
 	}()
 	var file *os.File
 	targetFileLoc := filepath.Join(targetLocation, fileName)
 	if _, err := os.Stat(targetFileLoc); err != nil {
-		if !os.IsNotExist(err){
+		if !os.IsNotExist(err) {
 			return fmt.Errorf("failed to get file stats: %w", err)
 		}
 		// file don't exist
 		fmt.Println("File:" + fileName + " not found ⚠️\nCreating... ✅")
 		file, err = os.Create(targetFileLoc)
-		if err!=nil{
+		if err != nil {
 			return fmt.Errorf("failed to create file: %w", err)
 		}
 	} else {
 		// file exist
 		file, err = os.OpenFile(targetFileLoc, os.O_TRUNC|os.O_WRONLY, 0666)
 		if err != nil {
-            return fmt.Errorf("failed to open file: %w", err)
-        }
+			return fmt.Errorf("failed to open file: %w", err)
+		}
 	}
 	defer file.Close()
 
@@ -74,6 +74,8 @@ func GenerateRandFile(targetFileSizeInBytes int64, targetLocation, fileName stri
 		}
 		bw.WriteString(fmt.Sprintf("%v\n", genRandNum()))
 	}
+	// exit the updateFileSizeRoutine
+	close(done)
 	// show remaining progress bar
 	if loggingEnabled {
 		utils.ShowProgressBar(currentFileSize, targetFileSizeInBytes, progressLineItr)
