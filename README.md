@@ -1,6 +1,7 @@
 
 # randnumsplash
 [![GitHub release](https://img.shields.io/github/release/anurag0608/randnumsplash?include_prereleases=&sort=semver&color=blue)](https://github.com/anurag0608/randnumsplash/releases/)
+[![codecov](https://codecov.io/gh/anurag0608/randnumsplash/branch/master/graph/badge.svg?token=6XQEON1KBK)](https://codecov.io/gh/anurag0608/randnumsplash)
 [![License](https://img.shields.io/badge/License-MIT-blue)](#license) <br/>
 A small and fast package that generates a dummy file of the desired length containing random numbers."
 
