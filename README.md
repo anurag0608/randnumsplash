@@ -4,7 +4,7 @@
 [![codecov](https://codecov.io/gh/anurag0608/randnumsplash/branch/master/graph/badge.svg?token=6XQEON1KBK)](https://codecov.io/gh/anurag0608/randnumsplash)
 [![GoDoc](https://img.shields.io/static/v1?label=godoc&message=reference&color=blue)](https://pkg.go.dev/github.com/anurag0608/randnumsplash)
 [![Go Test](https://github.com/anurag0608/randnumsplash/actions/workflows/go.yml/badge.svg)](https://github.com/anurag0608/randnumsplash/actions/workflows/go.yml)
-[![License](https://img.shields.io/badge/License-MIT-blue)](#license) <br/>
+[![License](https://img.shields.io/badge/License-MIT-blue)](LICENSE) <br/>
 A small and fast package that generates a dummy file of the desired length containing random numbers."
 
 ## Installation
