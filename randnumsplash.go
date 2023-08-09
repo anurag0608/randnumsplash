@@ -1,3 +1,4 @@
+// A small and fast package that generates a dummy file of the desired length containing random numbers.
 package randnumsplash
 
 import (
@@ -13,15 +14,19 @@ import (
 
 var random *rand.Rand
 
+// seed the random number generator
 func init() {
 	// Seed the random number generator
 	seed := time.Now().UnixNano() + int64(time.Now().Nanosecond()) + int64(rand.Intn(1000))
 	random = rand.New(rand.NewSource(seed))
 }
+// Function to get the random number 
 func genRandNum() int64 {
 	// Generate a random int64 number between 0 and the maximum 10000
 	return random.Int63n(10000)
 }
+// Generates a file with randum numbers in it.
+// All numbers are seperated with a new line character "\n"
 func GenerateRandFile(targetFileSizeInBytes int64, targetLocation, fileName string, loggingEnabled bool) (err error) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -101,6 +106,7 @@ func GenerateRandFile(targetFileSizeInBytes int64, targetLocation, fileName stri
 	}
 	return nil
 }
+// Function for computing buffer size based on targetFileSize 
 func computeBufferSize(targetFileSizeInBytes int64) int {
 	buffSize := 64 * 1024
 	if targetFileSizeInBytes < 64*1024 {
