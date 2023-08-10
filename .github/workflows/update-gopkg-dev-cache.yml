@@ -18,7 +18,6 @@ jobs:
       with:
           fallback: 1.1.1 #fallback tag version
           prefix: v
-    - name: Update cache in goproxy
-    - run: curl https://sum.golang.org/lookup/github.com/anurag0608/randnumsplash@${{ steps.latest.outputs.tag }}
+    - run: curl https://sum.golang.org/lookup/github.com/anurag0608/randnumsplash@${{ steps.latestTag.outputs.tag }}
       
 
