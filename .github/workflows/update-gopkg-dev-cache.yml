@@ -18,6 +18,6 @@ jobs:
       with:
           fallback: 1.1.1 #fallback tag version
           prefix: v
-    - run: curl https://sum.golang.org/lookup/github.com/anurag0608/randnumsplash@${{ steps.latestTag.outputs.tag }}
+    - run: curl https://sum.golang.org/lookup/github.com/anurag0608/randnumsplash@v${{ steps.latestTag.outputs.tag }}
       
 
