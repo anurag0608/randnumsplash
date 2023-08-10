@@ -1,0 +1,24 @@
+name: Update pkg.dev cache with the latest tag
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Get Latest Tag
+      id: latestTag
+      uses: WyriHaximus/github-action-get-previous-tag@v1
+      with:
+          fallback: 1.1.1 #fallback tag version
+          prefix: v
+    - name: Update cache in goproxy
+    - run: curl https://sum.golang.org/lookup/github.com/anurag0608/randnumsplash@${{ steps.latest.outputs.tag }}
+      
+
