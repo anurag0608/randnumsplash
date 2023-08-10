@@ -8,7 +8,7 @@ on:
 
 jobs:
 
-  build:
+  update-gopkg-cache:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
@@ -20,6 +20,6 @@ jobs:
       with:
           fallback: 1.1.1 #fallback tag version
           prefix: v
-    - run: curl https://sum.golang.org/lookup/github.com/anurag0608/randnumsplash@v${{ steps.latestTag.outputs.tag }}
+    - run: curl https://sum.golang.org/lookup/github.com/anurag0608/randnumsplash@${{ steps.latestTag.outputs.tag }}
       
 
