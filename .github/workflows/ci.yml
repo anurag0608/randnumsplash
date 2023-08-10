@@ -31,6 +31,7 @@ jobs:
       env:
         CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
   update-pkg_go_dev-cache: # will force goproxies to update cache in pkg.go.dev
+    needs: build # seq job. Depends on build
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
