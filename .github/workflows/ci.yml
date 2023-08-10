@@ -30,3 +30,16 @@ jobs:
       uses: codecov/codecov-action@v3
       env:
         CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+  update-pkg_go_dev-cache: # will force goproxies to update cache in pkg.go.dev
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+      with:
+          fetch-depth: 0
+    - name: Get Latest Tag
+      id: latestTag
+      uses: WyriHaximus/github-action-get-previous-tag@v1
+      with:
+          fallback: 1.1.1 #fallback tag version
+          prefix: v
+    - run: curl https://sum.golang.org/lookup/github.com/anurag0608/randnumsplash@${{ steps.latestTag.outputs.tag }}
