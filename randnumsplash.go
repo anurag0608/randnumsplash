@@ -7,12 +7,14 @@ import (
 	"math/rand"
 	"os"
 	"path/filepath"
+	"sync"
 	"time"
 
 	"github.com/schollz/progressbar/v3"
 )
 
 var random *rand.Rand
+var mutex sync.Mutex
 
 // seed the random number generator
 func init() {
@@ -20,11 +22,13 @@ func init() {
 	seed := time.Now().UnixNano() + int64(time.Now().Nanosecond()) + int64(rand.Intn(1000))
 	random = rand.New(rand.NewSource(seed))
 }
-// Function to get the random number 
+
+// Function to get the random number
 func genRandNum() int64 {
 	// Generate a random int64 number between 0 and the maximum 10000
-	return random.Int63n(10000)
+	return random.Int63n(100000)
 }
+
 // Generates a file with randum numbers in it.
 // All numbers are seperated with a new line character "\n"
 func GenerateRandFile(targetFileSizeInBytes int64, targetLocation, fileName string, loggingEnabled bool) (err error) {
@@ -54,7 +58,11 @@ func GenerateRandFile(targetFileSizeInBytes int64, targetLocation, fileName stri
 			return fmt.Errorf("failed to open file: %w", err)
 		}
 	}
-	defer file.Close()
+	defer func() {
+		if cerr := file.Close(); cerr != nil {
+			err = fmt.Errorf("failed to write to file: %w", err)
+		}
+	}()
 
 	// get sleep timer for updateFileSizeRoutine and buffer size using targetFileSize
 	buffSize := computeBufferSize(targetFileSizeInBytes)
@@ -82,6 +90,10 @@ func GenerateRandFile(targetFileSizeInBytes int64, targetLocation, fileName stri
 		progressbar.OptionSpinnerType(14),
 		progressbar.OptionSetRenderBlankState(false),
 	)
+	// acquire mutex
+	mutex.Lock()
+	defer mutex.Unlock()
+
 	var total int64 = 0
 	for {
 		if total >= targetFileSizeInBytes {
@@ -106,7 +118,8 @@ func GenerateRandFile(targetFileSizeInBytes int64, targetLocation, fileName stri
 	}
 	return nil
 }
-// Function for computing buffer size based on targetFileSize 
+
+// Function for computing buffer size based on targetFileSize
 func computeBufferSize(targetFileSizeInBytes int64) int {
 	buffSize := 64 * 1024
 	if targetFileSizeInBytes < 64*1024 {
