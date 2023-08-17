@@ -60,7 +60,7 @@ func GenerateRandFile(targetFileSizeInBytes int64, targetLocation, fileName stri
 	}
 	defer func() {
 		if cerr := file.Close(); cerr != nil {
-			err = fmt.Errorf("failed to write to file: %w", err)
+			err = fmt.Errorf("failed to write to file: %w", cerr)
 		}
 	}()
 
