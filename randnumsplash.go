@@ -114,3 +114,30 @@ func computeBufferSize(targetFileSizeInBytes int64) int {
 	}
 	return buffSize
 }
+func tempFuncOne(){
+	fmt.Println("hiii")
+	fmt.Println("hiii")
+	fmt.Println("hiii")
+	fmt.Println("hiii")
+	fmt.Println("hiii")
+	fmt.Println("hiii")
+	fmt.Println("hiii")
+}
+func tempFuncTwo(){
+	fmt.Println("hiii")
+	fmt.Println("hiii")
+	fmt.Println("hiii")
+	fmt.Println("hiii")
+	fmt.Println("hiii")
+	fmt.Println("hiii")
+	fmt.Println("hiii")
+}
+func tempFuncThree(){
+	fmt.Println("hiii")
+	fmt.Println("hiii")
+	fmt.Println("hiii")
+	fmt.Println("hiii")
+	fmt.Println("hiii")
+	fmt.Println("hiii")
+	fmt.Println("hiii")
+}
