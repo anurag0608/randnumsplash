@@ -1,5 +1,9 @@
 
-# randnumsplash
+<div align='center'>
+  <a href="https://www.freeiconspng.com/img/28363" title="Image from freeiconspng.com"><img src="https://www.freeiconspng.com/uploads/puzzle-icon-2.png" width="350" alt="Library Puzzle Icon" /></a>
+</div>
+
+# randnumsplash 
 [![GitHub release](https://img.shields.io/github/release/anurag0608/randnumsplash?include_prereleases=&sort=semver&color=blue)](https://github.com/anurag0608/randnumsplash/releases/)
 [![codecov](https://codecov.io/gh/anurag0608/randnumsplash/branch/master/graph/badge.svg?token=6XQEON1KBK)](https://codecov.io/gh/anurag0608/randnumsplash)
 [![GoDoc](https://img.shields.io/static/v1?label=godoc&message=reference&color=blue)](https://pkg.go.dev/github.com/anurag0608/randnumsplash)
