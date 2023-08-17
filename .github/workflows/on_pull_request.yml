@@ -1,0 +1,46 @@
+name: On pull request
+
+on: [pull_request]
+
+jobs:
+  build:
+    name: Build and Test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: 1.x
+
+      - name: Install dependencies
+        run: go mod download
+
+      - name: Run tests with coverage
+        run: |
+          go test -coverprofile=coverage.out ./...
+          go tool cover -func=coverage.out | grep total | awk '{print $3}'
+        id: coverage
+
+      - name: Check coverage threshold
+        run: |
+          COVERAGE_THRESHOLD=70.0 # Set your minimum coverage threshold here
+          COVERAGE=$(echo "${{ steps.coverage.outputs.stdout }}" | cut -d'%' -f1)
+          if (( $(echo "$COVERAGE < $COVERAGE_THRESHOLD" | bc -l) )); then
+            echo "Coverage is below the threshold. Minimum required: $COVERAGE_THRESHOLD, Actual: $COVERAGE"
+            PR_NUMBER=$(curl -s -H "Authorization: Bearer ${{ secrets.ACCESS_TOKEN }}" \
+                        "https://api.github.com/repos/${{ github.repository }}/pulls?state=open" | \
+                        jq --arg title "Low coverage warning" \
+                        --arg body "The code coverage ($COVERAGE%) is below the threshold of $COVERAGE_THRESHOLD%." \
+                        '.[] | select(.head.ref == env.BRANCH_NAME) | .number')
+            if [[ -n "$PR_NUMBER" ]]; then
+              echo "Adding comment to pull request #$PR_NUMBER"
+              COMMENT="The code coverage ($COVERAGE%) is below the threshold of $COVERAGE_THRESHOLD%."
+              curl -X POST -H "Authorization: Bearer ${{ secrets.ACCESS_TOKEN }}" \
+              -d "{\"body\":\"$COMMENT\"}" "https://api.github.com/repos/${{ github.repository }}/issues/$PR_NUMBER/comments"
+            fi
+          fi
+        if: always()
