@@ -65,7 +65,7 @@ func GenerateRandFile(targetFileSizeInBytes int64, targetLocation, fileName stri
 		fmt.Printf("Target file size: %v Bytes | %0.2f Mb\n", targetFileSizeInBytes, float64(targetFileSizeInBytes)/(1024*1024))
 		fmt.Println("Starting dumping random numbers 🤖")
 	}
-	// progressLineItr := utils.GetProgressLineIterator()
+	
 	start := time.Now()
 
 	progressBar := progressbar.NewOptions64(
@@ -97,7 +97,7 @@ func GenerateRandFile(targetFileSizeInBytes int64, targetLocation, fileName stri
 	if loggingEnabled {
 		progressBar.Finish()
 	}
-	// dont flush current file size already exceeded the target size
+	// dont flush as current file size already exceeded the target size
 	// bw.Flush()
 	end := time.Now()
 	elapsed := end.Sub(start)
